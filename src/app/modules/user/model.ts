@@ -3,6 +3,7 @@ import { TUser, TUserModel } from './interface';
 import bcrypt from 'bcrypt'
 import config from '../../config/config';
 import { StatusCodes } from 'http-status-codes';
+import AppError from '../../error/handleAppError';
 
 const UserSchema = new Schema<TUser, TUserModel>(
     {

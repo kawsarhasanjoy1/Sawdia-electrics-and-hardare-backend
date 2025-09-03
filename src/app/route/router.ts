@@ -4,6 +4,7 @@ import { authRoutes } from '../modules/auth/route';
 import { productRouter } from '../modules/product/route';
 import { parentCategoryRouter } from '../modules/parentCategory/route';
 import { categoryRouter } from '../modules/category/router';
+import { reviewRouter } from '../modules/review/router';
 
 const router = Router();
 
@@ -19,6 +20,10 @@ const moduleRoutes = [
   {
     path: '/product',
     route: productRouter
+  },
+  {
+    path: '/review',
+    route: reviewRouter
   },
   {
     path: '/parent-category',

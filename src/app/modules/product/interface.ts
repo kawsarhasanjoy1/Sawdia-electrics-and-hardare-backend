@@ -1,12 +1,5 @@
 import { Document, Types } from "mongoose";
 
-// export interface TReview {
-//   userId: Types.ObjectId;
-//   name: string;
-//   rating: number;
-//   comment?: string;
-//   createdAt?: Date;
-// }
 
 export interface TProduct {
     userId: Types.ObjectId;

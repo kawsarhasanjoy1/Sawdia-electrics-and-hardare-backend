@@ -30,7 +30,17 @@ const ProductSchema = new Schema<TProduct>(
         ratingQuantity: { type: Number, default: 0 },
         isDeleted: { type: Boolean, default: false }
     },
-    { timestamps: true }
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+        timestamps: true,
+    }
 );
+
+ProductSchema.virtual('reviews', {
+    ref: 'Review',
+    localField: '_id',
+    foreignField: 'productId'
+})
 
 export const ProductModel = model<TProduct>("Product", ProductSchema);
