@@ -19,5 +19,8 @@ export default {
     app_pass: process.env.APP_PASS,
     app_email: process.env.APP_EMAIL,
     app_port: process.env.APP_PORT,
-    host_email: process.env.HOST_EMAIL
+    host_email: process.env.HOST_EMAIL,
+    store_id: process.env.STORE_ID,
+    store_pass: process.env.STORE_PASS,
+    base_url: process.env.BASE_URL
 }

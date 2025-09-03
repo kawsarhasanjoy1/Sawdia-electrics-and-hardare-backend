@@ -5,7 +5,12 @@ import { ReviewModel } from './model';
 
 
 const createReview = async (payload: { userId: Types.ObjectId; productId: Types.ObjectId; rating: number; comment?: string }) => {
+    const existingReview = await ReviewModel.findOne({ userId: payload.userId, productId: payload.productId })
+    if (existingReview) throw new AppError(StatusCodes.CONFLICT, 'this user already has a review for this product')
     const review = await ReviewModel.create(payload);
+    if (review) {
+        await ReviewModel.averageRating(review.productId);
+    }
     return review;
 };
 
@@ -27,8 +32,8 @@ const deleteReview = async (id: string) => {
 }
 
 export const ReviewServices = {
-createReview,
-getReviewsByProduct,
-updateReview,
-deleteReview
+    createReview,
+    getReviewsByProduct,
+    updateReview,
+    deleteReview
 };

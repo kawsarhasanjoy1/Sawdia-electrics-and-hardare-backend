@@ -25,8 +25,6 @@ const getAllProducts = async (query: Record<string, any>) => {
     const searchAbleFields = ['name', 'brand', 'category.name', 'sku']
     const searchQuery = new QueryBuilders(ProductModel.find().populate('category').populate('reviews'), query).search(searchAbleFields).filter().pagination()
     const result = await searchQuery.QueryModel;
-
-   console.log(result)
     return result;
 };
 

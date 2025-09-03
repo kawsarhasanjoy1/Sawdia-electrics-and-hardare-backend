@@ -5,6 +5,7 @@ import { productRouter } from '../modules/product/route';
 import { parentCategoryRouter } from '../modules/parentCategory/route';
 import { categoryRouter } from '../modules/category/router';
 import { reviewRouter } from '../modules/review/router';
+import { orderRoutes } from '../modules/order/route';
 
 const router = Router();
 
@@ -20,6 +21,10 @@ const moduleRoutes = [
   {
     path: '/product',
     route: productRouter
+  },
+  {
+    path: '/order',
+    route: orderRoutes
   },
   {
     path: '/review',
