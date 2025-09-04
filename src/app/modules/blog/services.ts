@@ -10,11 +10,11 @@ const createBlog = async (payload: TBlog) => {
 };
 
 const getBlogs = async (query: Record<string, any>) => {
-    return await BlogModel.find().populate("productId", "name price images").sort({ createdAt: -1 });
+    return await BlogModel.find({ isDeleted: false, isPublished: true }).populate("productId", "name price images").sort({ createdAt: -1 });
 };
 
 const getBlogById = async (id: string) => {
-    const blog = await BlogModel.findById(id).populate("productId", "name price images");
+    const blog = await BlogModel.findByIdAndUpdate({ _id: id, isDeleted: false }, { $inc: { viewsCount: 1 } }, { new: true }).populate("productId", "name price images");
     if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
     return blog;
 };
