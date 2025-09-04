@@ -1,47 +1,54 @@
 import { ObjectId } from "mongodb";
 import config from "../../config/config";
 
+const createPayment = async (payload: any) => {
+    if (!payload.price || isNaN(Number(payload.price))) {
+        throw new Error("Invalid or missing price");
+    }
 
+    if (!payload.address) {
+        throw new Error("Shipping address is required");
+    }
 
-//sslcommerz init
+    const tranId = payload.tran_id || new ObjectId().toString();
 
-const createPayment = (payload: any) => {
-    const tran_id = new ObjectId().toString()
     const data = {
-        total_amount: payload.price,
-        currency: 'BDT',
-        tran_id: tran_id,
-        success_url: `${config.base_url}/success`,
-        fail_url: `${config.base_url}/fail`,
-        cancel_url: `${config.base_url}/cancel`,
+        total_amount: Number(payload.price),
+        currency: "BDT",
+        tran_id: tranId,
+        success_url: `${config.base_url}/success/payment/${tranId}`,
+        fail_url: `${config.base_url}/fail/payment/${tranId}`,
+        cancel_url: `${config.base_url}/cancel/payment/${tranId}`,
         ipn_url: `${config.base_url}/ipn`,
-        shipping_method: 'Courier',
-        product_name:  payload.productId.name,
-        product_category: payload.productId.category.name,
-        product_profile: payload.productId.image[0],
+
+        shipping_method: "Courier",
+        product_name: payload.productName || "Product",
+        product_category: payload.productCategory || "General",
+        product_profile: "general",
+
         cus_name: payload.name,
         cus_email: payload.email,
-        cus_add1: 'Dhaka',
-        cus_add2: 'Dhaka',
-        cus_city: 'Dhaka',
-        cus_state: 'Dhaka',
-        cus_postcode: '1000',
-        cus_country: 'Bangladesh',
-        cus_phone: payload.number,
-        cus_fax: '01711111111',
+        cus_add1: payload.address.line1,
+        cus_add2: payload.address.line2 || "",
+        cus_city: payload.address.city || "Dhaka",
+        cus_state: payload.address.state || "Dhaka",
+        cus_postcode: payload.address.postcode || "1000",
+        cus_country: payload.address.country || "Bangladesh",
+        cus_phone: payload.address.phone,
+        cus_fax: "N/A",
+
         ship_name: payload.name,
-        ship_add1: 'Dhaka',
-        ship_add2: 'Dhaka',
-        ship_city: 'Dhaka',
-        ship_state: 'Dhaka',
-        ship_postcode: 1000,
-        ship_country: 'Bangladesh',
+        ship_add1: payload.address.line1,
+        ship_add2: payload.address.line2 || "",
+        ship_city: payload.address.city || "Dhaka",
+        ship_state: payload.address.state || "Dhaka",
+        ship_postcode: payload.address.postcode || "1000",
+        ship_country: payload.address.country || "Bangladesh",
     };
 
-    return data
-    
-}
+    return data;
+};
 
 export const paymentServices = {
-    createPayment
-}
+    createPayment,
+};
