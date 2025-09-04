@@ -7,10 +7,10 @@ const router = express.Router();
 // Admin routes
 router.post("/", auth(USER_ROLE.admin, USER_ROLE.superadmin), blogController.createBlog);
 router.put("/:id", auth(USER_ROLE.admin, USER_ROLE.superadmin), blogController.updateBlog);
-router.delete("/:id", blogController.deleteBlog);
+router.delete("/:id", auth(USER_ROLE.admin, USER_ROLE.superadmin), blogController.deleteBlog);
 
 // Public routes
 router.get("/", blogController.getAllBlogs);
 router.get("/:id", blogController.getBlog);
 
-export default router;
+export const blogRoutes = router

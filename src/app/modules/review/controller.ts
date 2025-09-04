@@ -3,7 +3,7 @@ import sendResponse from '../../utils/sendResponse';
 import { catchAsync } from '../../utils/catchAsync';
 import { ReviewServices } from './services';
 
- const createReviewController = catchAsync(async (req: Request, res: Response) => {
+const createReviewController = catchAsync(async (req: Request, res: Response) => {
     const review = await ReviewServices.createReview(req.body);
     sendResponse(res, {
         statusCode: 201,
@@ -13,7 +13,7 @@ import { ReviewServices } from './services';
     });
 });
 
- const getReviewsByProductController = catchAsync(async (req: Request, res: Response) => {
+const getReviewsByProductController = catchAsync(async (req: Request, res: Response) => {
     const reviews = await ReviewServices.getReviewsByProduct(req.params.productId);
     sendResponse(res, {
         statusCode: 200,
@@ -23,8 +23,9 @@ import { ReviewServices } from './services';
     });
 });
 
- const updateReviewController = catchAsync(async (req: Request, res: Response) => {
-    const review = await ReviewServices.updateReview(req.params.id, req.body);
+const updateReviewController = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user?.userId
+    const review = await ReviewServices.updateReview(req.params.id, userId, req.body);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -33,8 +34,9 @@ import { ReviewServices } from './services';
     });
 });
 
- const deleteReviewController = catchAsync(async (req: Request, res: Response) => {
-    const result = await ReviewServices.deleteReview(req.params.id);
+const deleteReviewController = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user?.userId
+    const result = await ReviewServices.deleteReview(req.params.id,userId);
     sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -44,7 +46,7 @@ import { ReviewServices } from './services';
 });
 
 
-export const ReviewController  = {
+export const ReviewController = {
     createReviewController,
     getReviewsByProductController,
     updateReviewController,

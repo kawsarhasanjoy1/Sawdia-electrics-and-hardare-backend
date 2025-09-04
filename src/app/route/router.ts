@@ -5,9 +5,9 @@ import { productRouter } from '../modules/product/route';
 import { parentCategoryRouter } from '../modules/parentCategory/route';
 import { categoryRouter } from '../modules/category/router';
 import { reviewRouter } from '../modules/review/router';
-import { orderRoutes } from '../modules/order/route';
 import { paymentRouter } from '../modules/payment/route';
 import { CouponRoutes } from '../modules/coupon/route';
+import { blogRoutes } from '../modules/blog/route';
 
 const router = Router();
 
@@ -24,10 +24,7 @@ const moduleRoutes = [
     path: '/product',
     route: productRouter
   },
-  {
-    path: '/order',
-    route: orderRoutes
-  },
+
   {
     path: '/payment',
     route: paymentRouter
@@ -47,6 +44,10 @@ const moduleRoutes = [
   {
     path: '/coupon',
     route: CouponRoutes
+  },
+  {
+    path: '/blog',
+    route: blogRoutes
   }
 ];
 
