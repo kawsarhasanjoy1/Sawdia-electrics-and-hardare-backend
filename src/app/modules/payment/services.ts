@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import config from "../../config/config";
 import QueryBuilders from "../../builders/queryBuilders";
 import { OrderModel } from "./model";
+import { StatusCodes } from "http-status-codes";
 
 const createPayment = async (payload: any) => {
     if (!payload.price || isNaN(Number(payload.price))) {
@@ -75,9 +76,32 @@ const getUserPayments = async ({ id, query }: any) => {
     return result;
 };
 
+const updateOrderStatus = async (status: any, transectionId: string) => {
+    const order = await OrderModel.findOne({ tran_id: transectionId });
+    if (!order) throw new AppError(StatusCodes.NOT_FOUND, "Order not found");
+
+    // Prevent invalid transitions
+    if (status === "shipped" && order.status !== "paid") {
+        throw new AppError(StatusCodes.BAD_REQUEST, "Cannot ship an unpaid order");
+    }
+    if (status === "delivered" && order.status !== "shipped") {
+        throw new AppError(StatusCodes.BAD_REQUEST, "Cannot deliver a non-shipped order");
+    }
+    if ((order.status === "shipped" && status === "paid") ||
+        (order.status === "delivered" && ["paid", "shipped"].includes(status))) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "Cannot revert to previous status");
+    }
+
+    order.status = status;
+    await order.save();
+}
+
+
+
 
 export const paymentServices = {
     createPayment,
     getPayments,
     getUserPayments,
+    updateOrderStatus,
 };

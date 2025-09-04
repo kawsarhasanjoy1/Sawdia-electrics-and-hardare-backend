@@ -25,4 +25,5 @@ export interface TOrder {
     couponCode?: string;
     trackingNumber?: string;
     notes?: string;
+    discount?: number
 }

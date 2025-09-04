@@ -34,6 +34,7 @@ const OrderSchema = new Schema<TOrder>(
         couponCode: { type: String },
         trackingNumber: { type: String },
         notes: { type: String },
+        discount: { type: Number, default: 0 }
     },
     { timestamps: true }
 );
