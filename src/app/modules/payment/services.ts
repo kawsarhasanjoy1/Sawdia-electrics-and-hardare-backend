@@ -1,5 +1,7 @@
 import { ObjectId } from "mongodb";
 import config from "../../config/config";
+import QueryBuilders from "../../builders/queryBuilders";
+import { OrderModel } from "./model";
 
 const createPayment = async (payload: any) => {
     if (!payload.price || isNaN(Number(payload.price))) {
@@ -49,6 +51,33 @@ const createPayment = async (payload: any) => {
     return data;
 };
 
+
+const getPayments = async (query: Record<string, any>) => {
+    const searchTerm = ["name", "category"];
+    const searchQuery = new QueryBuilders(OrderModel.find(), query)
+        .search(searchTerm)
+        .filter()
+        .sort()
+        .pagination();
+    const result = await searchQuery.QueryModel.populate("productId").populate(
+        "userId"
+    );
+    return result;
+};
+const getUserPayments = async ({ id, query }: any) => {
+    const searchTerm = ['name', 'number', 'category']
+    const searchQuery = new QueryBuilders(OrderModel.find({ userId: id }), query).search(searchTerm).filter().pagination().sort();
+    const result = await searchQuery.QueryModel.populate("userId").populate(
+        "products.productId"
+    );
+
+
+    return result;
+};
+
+
 export const paymentServices = {
     createPayment,
+    getPayments,
+    getUserPayments,
 };

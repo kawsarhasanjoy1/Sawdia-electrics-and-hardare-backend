@@ -8,6 +8,7 @@ import { StatusCodes } from "http-status-codes";
 import { ObjectId } from "mongodb";
 import { OrderModel } from "./model";
 import AppError from "../../error/handleAppError";
+import sendResponse from "../../utils/sendResponse";
 const is_live = false
 const tran_id = new ObjectId().toString()
 const SSLCommerzPayment = require('sslcommerz-lts')
@@ -130,7 +131,27 @@ const paymentFail = catchAsync(async (req: Request, res: Response) => {
 const paymentCancel = catchAsync(async (req: Request, res: Response) => {
     const { transectionId } = req.params;
 
-    const order = await OrderModel.findOneAndUpdate(
+    // Find the order first
+    const order = await OrderModel.findOne({ tran_id: transectionId });
+    if (!order) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+            success: false,
+            message: "Order not found",
+        });
+    }
+
+    // Restore stock
+    if (order.products && Array.isArray(order.products)) {
+        await Promise.all(order.products.map(item =>
+            ProductModel.updateOne(
+                { _id: item.productId },
+                { $inc: { stock: item.quantity } }
+            )
+        ));
+    }
+
+    // Update order status
+    const updatedOrder = await OrderModel.findOneAndUpdate(
         { tran_id: transectionId },
         { status: "cancelled", paymentStatus: "failed" },
         { new: true }
@@ -139,16 +160,42 @@ const paymentCancel = catchAsync(async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({
         success: false,
         message: "Payment cancelled by user",
-        data: order,
+        data: updatedOrder,
     });
 });
+
+
+const getPayments = catchAsync(async (req: Request, res: Response) => {
+    const query = req.query;
+    const result = await paymentServices.getPayments(query);
+    sendResponse(res, {
+        statusCode: 200,
+        message: "payment faced successful",
+        data: result,
+        success: false
+    });
+});
+const getUserPayments = catchAsync(async (req: Request, res: Response) => {
+    const id = req?.params?.userId;
+    const query = req?.query;
+    const result = await paymentServices.getUserPayments({ id, query });
+    sendResponse(res, {
+        statusCode: 200,
+        message: "payment faced successful",
+        data: result,
+        success: false
+    });
+});
+
 
 
 export const paymentController = {
     createPaymenController,
     paymentSuccess,
     paymentFail,
-    paymentCancel
+    paymentCancel,
+    getPayments,
+    getUserPayments
 }
 
 
