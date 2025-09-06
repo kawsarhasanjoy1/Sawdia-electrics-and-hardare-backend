@@ -6,7 +6,6 @@ export interface TUser {
     email: string;
     password: string;
     role?: UserRole;
-    country: string;
     avatar?: string;
     isDeleted: boolean;
    isStatus: 'isActive' | 'Blocked';
