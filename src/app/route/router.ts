@@ -8,6 +8,8 @@ import { reviewRouter } from '../modules/review/router';
 import { paymentRouter } from '../modules/payment/route';
 import { CouponRoutes } from '../modules/coupon/route';
 import { blogRoutes } from '../modules/blog/route';
+import { FavouriteRoutes } from '../modules/favourite/route';
+import { brandRouter } from '../modules/brend/route';
 
 const router = Router();
 
@@ -42,8 +44,16 @@ const moduleRoutes = [
     route: categoryRouter
   },
   {
+    path: '/brand',
+    route: brandRouter
+  },
+  {
     path: '/coupon',
     route: CouponRoutes
+  },
+  {
+    path: '/favourite',
+    route: FavouriteRoutes
   },
   {
     path: '/blog',

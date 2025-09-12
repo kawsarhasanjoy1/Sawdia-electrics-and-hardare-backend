@@ -3,8 +3,10 @@ import { StatusCodes } from "http-status-codes";
 import { ParentCategoryModel } from "./model";
 import { TParentCategory } from "./interface";
 import { Restore, softDelete } from "../../helpers/softDelete";
+import QueryBuilders from "../../builders/queryBuilders";
 
 const createParentCategory = async (payload: TParentCategory) => {
+  console.log(payload);
   const existing = await ParentCategoryModel.findOne({ name: payload.name });
   if (existing)
     throw new AppError(StatusCodes.CONFLICT, "Parent category already exists");
@@ -13,13 +15,13 @@ const createParentCategory = async (payload: TParentCategory) => {
   return parentCategory;
 };
 
-const getAllParentCategories = async () => {
-  const categories = await ParentCategoryModel.find({
-    isActive: true,
-  })
-    .select("_id name")
-    .populate("createdBy", "name email role");
-  return categories;
+const getAllParentCategories = async (query: Record<string, any>) => {
+  const querySearch = new QueryBuilders(
+    ParentCategoryModel.find().populate("createdBy", "name email role"),
+    query
+  ).filter();
+  const result = querySearch.QueryModel;
+  return result;
 };
 
 const getParentCategoryById = async (id: string) => {

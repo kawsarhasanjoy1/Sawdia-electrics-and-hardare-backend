@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
+import { SubCategoryName } from '../../constance/global';
 
 export interface TCategory {
-  name: string;
-  slug: string;
+  name: SubCategoryName;
   description?: string;
   parentCategory: Types.ObjectId;
   createdBy: Types.ObjectId; 

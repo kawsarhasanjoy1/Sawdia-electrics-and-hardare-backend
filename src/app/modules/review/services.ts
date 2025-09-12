@@ -19,17 +19,17 @@ const createReview = async (payload: {
     if (existingReview) {
         throw new AppError(StatusCodes.CONFLICT, "This user already has a review for this product");
     }
-    const order = await OrderModel.findOne({
-        userId: payload.userId,
-        "products.productId": payload.productId,
-        status: "delivered",
-    });
-    if (!order) {
-        throw new AppError(
-            StatusCodes.BAD_REQUEST,
-            "You can only review this product after your order is delivered"
-        );
-    }
+    // const order = await OrderModel.findOne({
+    //     userId: payload.userId,
+    //     "products.productId": payload.productId,
+    //     status: "delivered",
+    // });
+    // if (!order) {
+    //     throw new AppError(
+    //         StatusCodes.BAD_REQUEST,
+    //         "You can only review this product after your order is delivered"
+    //     );
+    // }
     const review = await ReviewModel.create(payload);
     if (review) {
         await ReviewModel.averageRating(review.productId);
@@ -37,13 +37,9 @@ const createReview = async (payload: {
     return review;
 };
 
-export const reviewServices = {
-    createReview,
-};
 
-
-const getReviewsByProduct = async (productId: string) => {
-    const reviews = await ReviewModel.find({ productId }).populate('userId', 'name email');
+const getReviewsByProduct = async () => {
+    const reviews = await ReviewModel.find().populate('userId', 'name email');
     return reviews;
 };
 

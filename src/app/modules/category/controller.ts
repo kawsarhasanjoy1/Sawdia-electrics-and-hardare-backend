@@ -19,7 +19,7 @@ import { CategoryServices } from './services';
 });
 
  const getAllCategoriesController = catchAsync(async (req: Request, res: Response) => {
-    const categories = await CategoryServices.getAllCategories();
+    const categories = await CategoryServices.getAllCategories(req.query);
     sendResponse(res, {
         statusCode: 200,
         success: true,

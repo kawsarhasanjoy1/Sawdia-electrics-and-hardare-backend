@@ -2,39 +2,55 @@ import AppError from "../../error/handleAppError";
 import { StatusCodes } from "http-status-codes";
 import { TBlog } from "./interface";
 import { BlogModel } from "./model";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.ts";
+import { Restore, softDelete } from "../../helpers/softDelete";
 
-
-const createBlog = async (payload: TBlog) => {
-    const blog = await BlogModel.create(payload);
-    return blog;
+const createBlog = async (payload: TBlog, image: any) => {
+  const cloudinary: any = await sendImageToCloudinary(
+    image?.path,
+    image?.filename
+  );
+  payload.image = cloudinary?.secure_url;
+  const blog = await BlogModel.create(payload);
+  return blog;
 };
 
 const getBlogs = async (query: Record<string, any>) => {
-    return await BlogModel.find({ isDeleted: false, isPublished: true }).populate("productId", "name price images").sort({ createdAt: -1 });
+  return await BlogModel.find({ isDeleted: false })
+    .populate("userId", "name email")
+    .sort({ createdAt: -1 });
 };
 
 const getBlogById = async (id: string) => {
-    const blog = await BlogModel.findByIdAndUpdate({ _id: id, isDeleted: false }, { $inc: { viewsCount: 1 } }, { new: true }).populate("productId", "name price images");
-    if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
-    return blog;
+  const blog = await BlogModel.findByIdAndUpdate(
+    { _id: id, isDeleted: false },
+    { $inc: { viewsCount: 1 } },
+    { new: true }
+  );
+  if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
+  return blog;
 };
 
 const updateBlog = async (id: string, payload: Partial<TBlog>) => {
-    const blog = await BlogModel.findByIdAndUpdate(id, payload, { new: true });
-    if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
-    return blog;
+  const blog = await BlogModel.findByIdAndUpdate(id, payload, { new: true });
+  if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
+  return blog;
 };
 
-const deleteBlog = async (id: string) => {
-    const blog = await BlogModel.findByIdAndDelete(id);
-    if (!blog) throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
-    return blog;
+const softDeleteBlog = async (id: string) => {
+  const blog = softDelete(BlogModel, id as never)
+  return blog;
+};
+const restoreBlog = async (id: string) => {
+  const blog = Restore(BlogModel, id as never)
+  return blog;
 };
 
 export const blogServices = {
-    createBlog,
-    getBlogs,
-    getBlogById,
-    updateBlog,
-    deleteBlog,
+  createBlog,
+  getBlogs,
+  getBlogById,
+  updateBlog,
+  softDeleteBlog,
+  restoreBlog
 };

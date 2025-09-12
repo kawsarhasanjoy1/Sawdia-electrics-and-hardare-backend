@@ -6,11 +6,11 @@ import { USER_ROLE } from '../../constance/global';
 
 const router = Router();
 
-router.post('/create-parent-category',auth(USER_ROLE.admin,USER_ROLE.superadmin), ParentCategoryControllers.createParentCategoryController); // Only admin/superadmin
+router.post('/create-parent-category',auth(USER_ROLE.admin,USER_ROLE.superAdmin), ParentCategoryControllers.createParentCategoryController); // Only admin/superAdmin
 router.get('/', ParentCategoryControllers.getAllParentCategoriesController);
 router.get('/:id', ParentCategoryControllers.getParentCategoryByIdController);
-router.patch('/:id',auth(USER_ROLE.admin,USER_ROLE.superadmin), ParentCategoryControllers.updateParentCategoryController); // Only admin/superadmin
-router.delete('/:id',auth(USER_ROLE.admin,USER_ROLE.superadmin), ParentCategoryControllers.deleteParentCategoryController); // Only admin/superadmin
-router.delete('/restore/:id',auth(USER_ROLE.admin,USER_ROLE.superadmin), ParentCategoryControllers.restoreParentCategory); // Only admin/superadmin
+router.patch('/:id',auth(USER_ROLE.admin,USER_ROLE.superAdmin), ParentCategoryControllers.updateParentCategoryController); // Only admin/superAdmin
+router.delete('/:id',auth(USER_ROLE.admin,USER_ROLE.superAdmin), ParentCategoryControllers.deleteParentCategoryController); // Only admin/superAdmin
+router.delete('/restore/:id',auth(USER_ROLE.admin,USER_ROLE.superAdmin), ParentCategoryControllers.restoreParentCategory); // Only admin/superAdmin
 
 export const parentCategoryRouter = router

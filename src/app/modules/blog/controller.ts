@@ -3,9 +3,10 @@ import { catchAsync } from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { blogServices } from "./services";
 
-
 const createBlog = catchAsync(async (req: Request, res: Response) => {
-  const result = await blogServices.createBlog(req.body);
+  const image = req.file;
+  const data = { ...req.body, userId: req?.user?.userId };
+  const result = await blogServices.createBlog(data, image);
   sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -25,13 +26,23 @@ const updateBlog = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const deleteBlog = catchAsync(async (req: Request, res: Response) => {
+const softDeleteBlog = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await blogServices.deleteBlog(id);
+  const result = await blogServices.softDeleteBlog(id);
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Blog deleted successfully",
+    data: result,
+  });
+});
+const restoreBlog = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await blogServices.restoreBlog(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Blog restored successfully",
     data: result,
   });
 });
@@ -60,7 +71,8 @@ const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
 export const blogController = {
   createBlog,
   updateBlog,
-  deleteBlog,
   getBlog,
   getAllBlogs,
+  softDeleteBlog,
+  restoreBlog,
 };

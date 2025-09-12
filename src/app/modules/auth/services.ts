@@ -67,7 +67,7 @@ const changePassword = async (userData: any, payload: { oldPassword: string; new
     if (payload.oldPassword === payload.newPassword) {
         throw new AppError(StatusCodes.BAD_REQUEST, 'New password must be different from old password');
     }
-    if (!(await UserModel.isPasswordMatched(payload?.oldPassword, user?.password as string))) throw new AppError(StatusCodes.FORBIDDEN, 'Password do not matched');
+    if (!(await UserModel.isPasswordMatched(payload?.oldPassword, user?.password as string))) throw new AppError(StatusCodes.CONFLICT, 'Password do not matched');
     const hashedPassword = await bcrypt.hash(payload.newPassword, Number(config.salt_rounds));
     const updatePass = await UserModel.findOneAndUpdate({ _id: user?._id }, { password: hashedPassword })
     return updatePass
