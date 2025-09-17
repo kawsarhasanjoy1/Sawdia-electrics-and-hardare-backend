@@ -19,7 +19,8 @@ const toggleFavourite = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getFavourites = catchAsync(async (req: Request, res: Response) => {
-  const userId = req?.user?.userId;
+  const { userId } = req?.user;
+  console.log(userId)
   const result = await FavouriteService.getFavourites(userId);
 
   sendResponse(res, {

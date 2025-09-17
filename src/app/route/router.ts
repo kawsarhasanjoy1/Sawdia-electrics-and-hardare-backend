@@ -10,6 +10,7 @@ import { CouponRoutes } from '../modules/coupon/route';
 import { blogRoutes } from '../modules/blog/route';
 import { FavouriteRoutes } from '../modules/favourite/route';
 import { brandRouter } from '../modules/brend/route';
+import { activityRouter } from '../modules/recentActivity/route';
 
 const router = Router();
 
@@ -58,6 +59,10 @@ const moduleRoutes = [
   {
     path: '/blog',
     route: blogRoutes
+  },
+  {
+    path: '/recent-activity',
+    route: activityRouter
   }
 ];
 

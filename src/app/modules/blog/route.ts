@@ -29,8 +29,11 @@ router.delete(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   blogController.restoreBlog
 );
-
-// Public routes
+router.patch(
+  "/toggle-publish/:id",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  blogController.togglePublishController
+);
 router.get("/", blogController.getAllBlogs);
 router.get("/:id", blogController.getBlog);
 

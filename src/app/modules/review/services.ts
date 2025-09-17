@@ -39,7 +39,7 @@ const createReview = async (payload: {
 
 
 const getReviewsByProduct = async () => {
-    const reviews = await ReviewModel.find().populate('userId', 'name email');
+    const reviews = await ReviewModel.find().populate('userId', 'name email').populate('productId');
     return reviews;
 };
 

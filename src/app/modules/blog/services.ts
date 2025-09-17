@@ -38,12 +38,27 @@ const updateBlog = async (id: string, payload: Partial<TBlog>) => {
 };
 
 const softDeleteBlog = async (id: string) => {
-  const blog = softDelete(BlogModel, id as never)
+  const blog = softDelete(BlogModel, id as never);
   return blog;
 };
 const restoreBlog = async (id: string) => {
-  const blog = Restore(BlogModel, id as never)
+  const blog = Restore(BlogModel, id as never);
   return blog;
+};
+
+const togglePublishStatus = async (id: string) => {
+  const blog = await BlogModel.findById(id);
+  if (!blog) {
+    throw new AppError(StatusCodes.NOT_FOUND, "Blog not found");
+  }
+
+  const updatedBlog = await BlogModel.findByIdAndUpdate(
+    id,
+    { isPublished: !blog.isPublished },
+    { new: true }
+  );
+
+  return updatedBlog;
 };
 
 export const blogServices = {
@@ -52,5 +67,6 @@ export const blogServices = {
   getBlogById,
   updateBlog,
   softDeleteBlog,
-  restoreBlog
+  restoreBlog,
+  togglePublishStatus,
 };

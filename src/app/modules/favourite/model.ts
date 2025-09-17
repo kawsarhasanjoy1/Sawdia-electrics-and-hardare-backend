@@ -10,4 +10,6 @@ const FavouriteSchema = new Schema<TFavourite>(
   { timestamps: true }
 );
 
+FavouriteSchema.index({ userId: 1, productId: 1 }, { unique: true });
+
 export const FavouriteModel = model<TFavourite>("Favourite", FavouriteSchema);

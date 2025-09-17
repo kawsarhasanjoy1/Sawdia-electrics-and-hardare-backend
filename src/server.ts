@@ -1,15 +1,22 @@
 import mongoose from "mongoose";
-import { app } from "./app";
-import config from "./app/config/config";
+import { app } from "./app";                 // <- your Express app
+import config from "./app/config/config";    // <- contains dbUrl & port
+import { createServer } from "http";
+import { socketUtils } from "./app/utils/socket";
 
 async function main() {
-  await mongoose.connect(config.dbUrl as string);
-  app.listen(config.port, () => {
-    console.log(`Example app listening on port ${config.port}`);
-  });
+  try {
+    await mongoose.connect(config.dbUrl as string);
+    console.log("✅ MongoDB connected");
+    const httpServer = createServer(app);
+    socketUtils(httpServer);
+    httpServer.listen(config.port, () => {
+      console.log(`🚀 Server running on http://localhost:${config.port}`);
+    });
+  } catch (err) {
+    console.error("❌ Fatal error starting server:", err);
+    process.exit(1);
+  }
 }
 
-main().catch((err) => {
-  console.error("Fatal error starting server:", err);
-  process.exit(1);
-});
+main();

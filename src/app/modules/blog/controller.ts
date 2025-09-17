@@ -68,6 +68,20 @@ const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const togglePublishController = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await blogServices.togglePublishStatus(id);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: `Blog publish status toggled to ${result?.isPublished}`,
+      data: result,
+    });
+  }
+);
+
 export const blogController = {
   createBlog,
   updateBlog,
@@ -75,4 +89,5 @@ export const blogController = {
   getAllBlogs,
   softDeleteBlog,
   restoreBlog,
+  togglePublishController
 };

@@ -1,5 +1,3 @@
-
-
 // Now, also update your QueryBuilders class.
 // The `filter` method needs to be adjusted to handle the `queryObj` passed from the service.
 
@@ -30,9 +28,13 @@ class QueryBuilders<T> {
   filter() {
     // The query object is already prepared by the service, so just use it
     const queryObj = { ...this.query };
+    if (queryObj?.isOnline) {
+      queryObj.isOnline = Boolean(queryObj?.isOnline);
+    }
     const excludedFields = ["searchTerm", "page", "sort", "limit"];
     excludedFields.forEach((field) => delete queryObj[field]);
     // Apply the prepared filters from the service
+    console.log("queryObj", queryObj);
     this.QueryModel = this.QueryModel.find(queryObj);
     return this;
   }

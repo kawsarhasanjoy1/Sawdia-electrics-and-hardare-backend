@@ -24,4 +24,5 @@ export default {
   cloud_name: process.env.CLOUD_NAME,
   cloud_api_key: process.env.API_KEY,
   cloud_api_secret: process.env.API_SECRET,
+  frontend_url: process.env.FRONT_END_URL
 };

@@ -10,13 +10,12 @@ export const app = express();
 
 app.use(cookieParser());
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
-app.use(express.json()); // for application/json
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
-app.use(secureApi);
-
 app.disable("x-powered-by");
+app.use(secureApi);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });

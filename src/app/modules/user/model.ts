@@ -29,6 +29,8 @@ const UserSchema = new Schema<TUser, TUserModel>(
       enum: ["isActive", "Blocked"],
       default: "isActive",
     },
+    isOnline: { type: Boolean, default: false },
+    lastSeen: { type: Date },
   },
   { timestamps: true }
 );
