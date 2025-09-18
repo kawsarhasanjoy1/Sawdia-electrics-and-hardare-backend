@@ -4,10 +4,37 @@ import { TUser } from "./interface";
 import { UserModel } from "./model";
 import { Restore, softDelete } from "../../helpers/softDelete";
 import QueryBuilders from "../../builders/queryBuilders";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.ts";
+import { Types } from "mongoose";
 
 const createUser = async (payload: Partial<TUser>): Promise<TUser> => {
   const doc = new UserModel(payload);
   return doc.save();
+};
+const createAdmin = async (
+  userId: Types.ObjectId,
+  payload: Partial<TUser>,
+  avatar: any
+) => {
+  const cloudinary: any = await sendImageToCloudinary(
+    avatar?.path,
+    avatar?.fieldname
+  );
+  payload.avatar = cloudinary?.secure_url;
+  const isExistSuperAdmin = await UserModel.findOne({
+    _id: userId,
+    role: "superAdmin",
+  });
+  if (payload?.role !== "admin") {
+    throw new AppError(
+      StatusCodes.CONFLICT,
+      "This route only for create admin"
+    );
+  }
+  if (!isExistSuperAdmin)
+    throw new AppError(StatusCodes.UNAUTHORIZED, "You are not authorized");
+  payload.userId = userId;
+  const result = await UserModel.create(payload);
 };
 
 const findUsers = async (query: Record<string, any>) => {
@@ -23,6 +50,15 @@ const findUsers = async (query: Record<string, any>) => {
   return result;
 };
 
+const getMe = async (userId: string) => {
+  const user = await UserModel.findOne({ _id: userId });
+  if (!user)
+    throw new AppError(StatusCodes.NOT_FOUND, "this user is not found");
+  await UserModel.isUserExistsByEmail(user?.email);
+
+  return user;
+};
+
 const findUserById = async (id: string): Promise<TUser | null> => {
   return UserModel.findById(id).select("-password").exec();
 };
@@ -33,9 +69,16 @@ const findUserByEmail = async (email: string): Promise<TUser | null> => {
 
 const updateUserById = async (
   id: string,
-  update: Partial<TUser>
+  avatar: any,
+  payload: Partial<TUser>
 ): Promise<TUser | null> => {
-  return UserModel.findByIdAndUpdate(id, update, { new: true })
+  const cloudinary = (await sendImageToCloudinary(
+    avatar?.path,
+    avatar?.fieldname
+  )) as any;
+
+  payload.avatar = cloudinary?.secure_url;
+  return UserModel.findByIdAndUpdate(id, { ...payload }, { new: true })
     .select("-password")
     .exec();
 };
@@ -81,4 +124,6 @@ export const userService = {
   updateStatus,
   deleteUser,
   restoreUser,
+  getMe,
+  createAdmin,
 };

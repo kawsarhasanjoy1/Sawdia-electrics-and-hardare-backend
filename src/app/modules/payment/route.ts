@@ -27,14 +27,36 @@ router.get(
   paymentController.getPayments
 );
 router.get(
+  "/my-order",
+  auth(USER_ROLE.user),
+  paymentController.getUserPayments
+);
+router.delete(
+  "/delete-my-order/:id",
+  auth(USER_ROLE.user),
+  paymentController.userOrderSoftDelete
+);
+router.delete(
+  "/restored-my-order/:id",
+  auth(USER_ROLE.user),
+  paymentController.userOrderRestored
+);
+router.get(
   "/stats",
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   paymentController.getStats
 );
 router.get(
-  "/weekly-sales",
+  "/monthly-sales",
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
-  paymentController.getWeeklySales
+  paymentController.getMonthlySales
 );
+router.get(
+  "/user-yearly-buy",
+  auth(USER_ROLE.user),
+  paymentController.getUserYearlyBuy
+);
+
+router.get("/user-stats", auth(USER_ROLE.user), paymentController.getUserStats);
 
 export const paymentRouter = router;

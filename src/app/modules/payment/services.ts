@@ -7,6 +7,9 @@ import { ProductModel } from "../product/model";
 import { UserModel } from "../user/model";
 import { ReviewModel } from "../review/model";
 import AppError from "../../error/handleAppError";
+import { Types } from "mongoose";
+import { startOfMonth, subMonths } from "date-fns";
+import { Restore, softDelete } from "../../helpers/softDelete";
 
 const createPayment = async (payload: any) => {
   if (!payload.price || isNaN(Number(payload.price))) {
@@ -107,7 +110,6 @@ const updateOrderStatus = async (status: any, transectionId: string) => {
     );
   }
 
-  
   order.status = status;
   await order.save();
 };
@@ -134,7 +136,7 @@ const getStats = async () => {
   };
 };
 
-const weeklySale = async () => {
+const monthlySale = async () => {
   const now = new Date();
   const lastYear = new Date();
   lastYear.setFullYear(now.getFullYear() - 1);
@@ -172,11 +174,125 @@ const weeklySale = async () => {
   return monthlySales;
 };
 
+const getUserStats = async (userId: string) => {
+  const revenueResult = await OrderModel.aggregate([
+    {
+      $match: { userId: new Types.ObjectId(userId) },
+    },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: "$totalAmount" },
+      },
+    },
+  ]);
+
+  const revenue = revenueResult[0]?.totalRevenue || 0;
+  const totalOrder = await OrderModel.countDocuments({ userId });
+
+  const orders = await OrderModel.find({ userId });
+  const totalProduct = orders?.reduce((sum, order) => {
+    const orderProductCount = order.products?.reduce(
+      (pSum, p) => pSum + (p.quantity || 1),
+      0
+    );
+    return sum + orderProductCount;
+  }, 0);
+
+  const totalReview = await ReviewModel.countDocuments({ userId });
+
+  return {
+    totalOrder,
+    revenue,
+    totalProduct,
+    totalReview,
+  };
+};
+
+export const getUserYearlyBuy = async (userId: string) => {
+  const startDate = startOfMonth(subMonths(new Date(), 11));
+
+  const stats = await OrderModel.aggregate([
+    {
+      $match: {
+        userId: new Types.ObjectId(userId),
+        createdAt: { $gte: startDate },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" },
+        },
+        totalAmount: { $sum: "$totalAmount" },
+        totalOrders: { $sum: 1 },
+        totalProducts: { $sum: { $sum: "$products.quantity" } },
+      },
+    },
+    { $sort: { "_id.year": 1, "_id.month": 1 } },
+  ]);
+
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const result: {
+    month: string;
+    totalAmount: number;
+    totalOrders: number;
+    totalProducts: number;
+  }[] = [];
+
+  for (let i = 0; i < 12; i++) {
+    const d = subMonths(new Date(), 11 - i);
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+
+    const found = stats.find(
+      (s) => s._id.year === year && s._id.month === month
+    );
+
+    result.push({
+      month: `${monthNames[month - 1]} ${year}`,
+      totalAmount: found?.totalAmount || 0,
+      totalOrders: found?.totalOrders || 0,
+      totalProducts: found?.totalProducts || 0,
+    });
+  }
+
+  return result;
+};
+
+const softDeleteOrder = async (orderId: Types.ObjectId) => {
+  const result = await softDelete(OrderModel, orderId);
+  return result;
+};
+const restoreOrder = async (orderId: Types.ObjectId) => {
+  const result = await Restore(OrderModel, orderId);
+  return result;
+};
+
 export const paymentServices = {
   createPayment,
   getPayments,
   getUserPayments,
   updateOrderStatus,
   getStats,
-  weeklySale,
+  monthlySale,
+  getUserStats,
+  getUserYearlyBuy,
+  softDeleteOrder,
+  restoreOrder,
 };

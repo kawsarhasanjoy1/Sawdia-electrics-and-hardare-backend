@@ -1,7 +1,8 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { UserRole } from "../../constance/global";
 
 export interface TUser {
+  userId?: Types.ObjectId;
   name: string;
   email: string;
   password: string;

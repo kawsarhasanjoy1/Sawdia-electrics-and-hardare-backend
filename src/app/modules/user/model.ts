@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { TUser, TUserModel } from "./interface";
 import bcrypt from "bcrypt";
 import config from "../../config/config";
@@ -7,6 +7,7 @@ import AppError from "../../error/handleAppError";
 
 const UserSchema = new Schema<TUser, TUserModel>(
   {
+    userId: { type: Schema.Types.ObjectId, default: "" },
     name: { type: String, required: true, trim: true },
     email: {
       type: String,

@@ -94,7 +94,7 @@ const createPaymenController = catchAsync(
 
 const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
   const { transectionId } = req.params;
-  console.log("transectionId" , transectionId)
+  console.log("transectionId", transectionId);
   const order = await OrderModel.findOne({ tran_id: transectionId });
   if (!order) throw new AppError(StatusCodes.NOT_FOUND, "Order not found");
 
@@ -210,7 +210,7 @@ const getPayments = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getUserPayments = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.params.userId;
+  const { userId } = req.user;
   const query = req.query;
   const result = await paymentServices.getUserPayments({ id: userId, query });
 
@@ -236,7 +236,6 @@ const updateOrderStatus = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
 const getStats = catchAsync(async (req: Request, res: Response) => {
   const result = await paymentServices.getStats();
 
@@ -247,12 +246,58 @@ const getStats = catchAsync(async (req: Request, res: Response) => {
     success: true,
   });
 });
-const getWeeklySales = catchAsync(async (req: Request, res: Response) => {
-  const result = await paymentServices.weeklySale();
+const getMonthlySales = catchAsync(async (req: Request, res: Response) => {
+  const result = await paymentServices.monthlySale();
 
   sendResponse(res, {
     statusCode: 200,
-    message: "weekly sales fetched successfully",
+    message: "Monthly sales fetched successfully",
+    data: result,
+    success: true,
+  });
+});
+
+const getUserStats = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user;
+  const result = await paymentServices.getUserStats(userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "User stats fetched successfully",
+    data: result,
+    success: true,
+  });
+});
+
+const getUserYearlyBuy = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user;
+  const result = await paymentServices.getUserYearlyBuy(userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "user yearly buy fetched successfully",
+    data: result,
+    success: true,
+  });
+});
+const userOrderSoftDelete = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params as any;
+  const result = await paymentServices.softDeleteOrder(id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "user order soft deleted successfully",
+    data: result,
+    success: true,
+  });
+});
+const userOrderRestored = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params as any;
+  const result = await paymentServices.restoreOrder(id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "user order restored successfully",
     data: result,
     success: true,
   });
@@ -267,5 +312,9 @@ export const paymentController = {
   getUserPayments,
   updateOrderStatus,
   getStats,
-  getWeeklySales
+  getMonthlySales,
+  getUserStats,
+  getUserYearlyBuy,
+  userOrderRestored,
+  userOrderSoftDelete,
 };

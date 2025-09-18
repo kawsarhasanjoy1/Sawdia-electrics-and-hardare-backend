@@ -35,10 +35,33 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
     data: user,
   });
 });
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as any;
+  const payload = req.body as any;
+  const avatar = req.file;
+  const result = await userService.createAdmin(userId, payload, avatar);
+
+  return sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Admin created",
+    data: result,
+  });
+});
 
 const getUsers = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
   const users = await userService.findUsers(query);
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    data: users,
+  });
+});
+
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user;
+  const users = await userService.getMe(userId);
   return sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -65,34 +88,13 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateUser = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { userId } = req.user;
   const payload = req.body as any;
-
-  if (payload.country) {
-    const ok = countries.find(
-      (c) => c.code === payload.country || c.name === payload.country
-    );
-    if (!ok) {
-      return sendResponse(res, {
-        statusCode: 400,
-        success: false,
-        message: "Invalid country",
-        data: null,
-      });
-    }
-  }
-
-  const updated = await userService.updateUserById(id, payload);
-  if (!updated) {
-    return sendResponse(res, {
-      statusCode: 404,
-      success: false,
-      message: "User not found",
-      data: null,
-    });
-  }
+  const avatar = req.file;
+  const updated = await userService.updateUserById(userId, avatar, payload);
   return sendResponse(res, {
     statusCode: 200,
+    message: "User updated successful",
     success: true,
     data: updated,
   });
@@ -142,4 +144,6 @@ export const userController = {
   upStatus,
   deleteUser,
   restoreUser,
+  getMe,
+  createAdmin,
 };

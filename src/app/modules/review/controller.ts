@@ -5,7 +5,10 @@ import { ReviewServices } from "./services";
 
 const createReviewController = catchAsync(
   async (req: Request, res: Response) => {
-    const review = await ReviewServices.createReview({...req.body, userId: req?.user?.userId});
+    const review = await ReviewServices.createReview({
+      ...req.body,
+      userId: req?.user?.userId,
+    });
     sendResponse(res, {
       statusCode: 201,
       success: true,
@@ -17,11 +20,23 @@ const createReviewController = catchAsync(
 
 const getReviewsByProductController = catchAsync(
   async (req: Request, res: Response) => {
-    const reviews = await ReviewServices.getReviewsByProduct()
+    const reviews = await ReviewServices.getReviewsByProduct();
     sendResponse(res, {
       statusCode: 200,
       success: true,
       message: "Reviews retrieved successfully",
+      data: reviews,
+    });
+  }
+);
+const getUserReviewController = catchAsync(
+  async (req: Request, res: Response) => {
+    const { userId } = req.user;
+    const reviews = await ReviewServices.getUserReview(userId);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "User Reviews retrieved successfully",
       data: reviews,
     });
   }
@@ -57,9 +72,11 @@ const deleteReviewController = catchAsync(
   }
 );
 
+
 export const ReviewController = {
   createReviewController,
   getReviewsByProductController,
   updateReviewController,
   deleteReviewController,
+  getUserReviewController,
 };

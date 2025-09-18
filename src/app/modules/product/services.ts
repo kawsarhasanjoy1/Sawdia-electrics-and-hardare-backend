@@ -34,20 +34,49 @@ const createProduct = async (payload: TProduct, users: any, images: any[]) => {
 };
 
 const getAllProducts = async (query: Record<string, any>) => {
-  const { parentCategory, category, searchTerm, page, limit, ...rest } = query;
+  const {
+    parentCategory,
+    category,
+    brand,
+    searchTerm,
+    minPrice,
+    maxPrice,
+    rating,
+    page,
+    limit,
+    ...rest
+  } = query;
 
-  const searchAbleFields = ["name", "brand", "sku"];
+  const searchAbleFields = ["name", "sku"];
   const queryObj: Record<string, any> = { ...rest };
 
   if (category) {
-    queryObj.category = category;
+    queryObj.categoryId = category;
   } else if (parentCategory) {
     const subCategories = await CategoryModel.find({ parentCategory }).select(
       "_id"
     );
-    const subCategoryIds = subCategories.map((c) => c._id);
-    queryObj.category = { $in: subCategoryIds };
+    const subIds = subCategories.map((c) => c._id);
+    queryObj.categoryId = { $in: subIds };
   }
+
+  if (brand) {
+    queryObj.brandId = brand;
+  }
+
+  if (minPrice || minPrice > 0 || maxPrice || maxPrice > 0) {
+    const priceFilter: Record<string, number> = {};
+    if (minPrice && minPrice > 0) priceFilter.$gte = minPrice;
+    if (maxPrice && maxPrice > 0) priceFilter.$lte = maxPrice;
+    if (Object.keys(priceFilter).length > 0) {
+      queryObj.price = priceFilter;
+    }
+  }
+
+  if (rating) {
+    queryObj.ratingAverage = { $gte: rating };
+  }
+
   const productQuery = new QueryBuilders(
     ProductModel.find()
       .populate("categoryId")
@@ -63,14 +92,15 @@ const getAllProducts = async (query: Record<string, any>) => {
   const products = await productQuery.QueryModel;
   return products;
 };
+
 const getProductById = async (id: string) => {
   const product = await ProductModel.findById(id)
     .populate("categoryId")
     .populate({
-    path: "reviews",
-    options: { sort: { createdAt: -1 }, limit: 5 }, 
-    populate: { path: "userId", select: "name image" }, 
-  });
+      path: "reviews",
+      options: { sort: { createdAt: -1 }, limit: 5 },
+      populate: { path: "userId", select: "name image" },
+    });
   if (!product) throw new AppError(StatusCodes.NOT_FOUND, "Product not found");
   return product;
 };
