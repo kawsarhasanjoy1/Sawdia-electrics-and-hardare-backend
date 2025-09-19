@@ -94,7 +94,6 @@ const createPaymenController = catchAsync(
 
 const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
   const { transectionId } = req.params;
-  console.log("transectionId", transectionId);
   const order = await OrderModel.findOne({ tran_id: transectionId });
   if (!order) throw new AppError(StatusCodes.NOT_FOUND, "Order not found");
 
@@ -130,9 +129,7 @@ const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
 
 const paymentFail = catchAsync(async (req: Request, res: Response) => {
   const { transectionId } = req.params;
-  console.log(transectionId);
   const order = await OrderModel.findOne({ tran_id: transectionId });
-  console.log(order);
   if (!order) {
     return res.status(StatusCodes.NOT_FOUND).json({
       success: false,

@@ -23,9 +23,14 @@ const getAllCategories = async (query: Record<string, any>) => {
       .populate("parentCategory")
       .populate("createdBy", "name email role"),
     query
-  ).filter();
-  const categories = await categoryQuery.QueryModel;
-  return categories;
+  )
+    .filter()
+    .search(["name"])
+    .sort()
+    .pagination();
+  const data = await categoryQuery.QueryModel;
+  const meta = await categoryQuery.countTotal();
+  return { data, meta };
 };
 
 const getCategoryById = async (id: string) => {

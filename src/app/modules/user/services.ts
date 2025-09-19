@@ -38,16 +38,18 @@ const createAdmin = async (
 };
 
 const findUsers = async (query: Record<string, any>) => {
+  const searchableField = ["name", "email"];
   const userQuery = new QueryBuilders(
     UserModel.find().select("-password"),
     query
   )
-    .search(["name email"])
+    .search(searchableField)
     .filter()
     .pagination()
     .sort();
-  const result = await userQuery.QueryModel;
-  return result;
+  const data = await userQuery.QueryModel;
+  const meta = await userQuery.countTotal();
+  return { data, meta };
 };
 
 const getMe = async (userId: string) => {

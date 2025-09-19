@@ -9,7 +9,6 @@ import AppError from "../../error/handleAppError";
 import QueryBuilders from "../../builders/queryBuilders";
 
 const createBrand = async (payload: TBrand) => {
-  console.log(payload);
   const category = await CategoryModel.findById(payload.categoryId);
   if (!category)
     throw new AppError(StatusCodes.NOT_FOUND, "category not found");
@@ -24,15 +23,20 @@ const createBrand = async (payload: TBrand) => {
 };
 
 const getAllBrands = async (query: Record<string, any>) => {
-  
+  const searchableField = ["name"];
   const queryBrand = new QueryBuilders(
     BrandModel.find()
       .populate("createdBy", "name email")
       .populate("categoryId", "name"),
-  query
-  ).filter();
-  const result = await queryBrand.QueryModel;
-  return result;
+    query
+  )
+    .filter()
+    .search(searchableField)
+    .sort()
+    .pagination();
+  const data = await queryBrand.QueryModel;
+  const meta = await queryBrand.countTotal();
+  return { data, meta };
 };
 
 const getBrandById = async (id: string) => {

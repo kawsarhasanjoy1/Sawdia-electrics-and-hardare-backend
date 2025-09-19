@@ -89,8 +89,9 @@ const getAllProducts = async (query: Record<string, any>) => {
     .sort()
     .pagination();
 
-  const products = await productQuery.QueryModel;
-  return products;
+  const data = await productQuery.QueryModel;
+  const meta = await productQuery.countTotal();
+  return { data, meta };
 };
 
 const getProductById = async (id: string) => {

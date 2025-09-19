@@ -1,7 +1,6 @@
 import ActivityLog from "./model";
 
 const createActivity = async (userId: string) => {
-    console.log(userId)
   const activity = await ActivityLog.create(userId);
   return activity;
 };

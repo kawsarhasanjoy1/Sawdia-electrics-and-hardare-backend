@@ -1,4 +1,3 @@
-
 import { Query } from "mongoose";
 
 class QueryBuilders<T> {
@@ -44,6 +43,21 @@ class QueryBuilders<T> {
     const skip = (page - 1) * limit;
     this.QueryModel = this.QueryModel.skip(skip).limit(limit);
     return this;
+  }
+
+  async countTotal() {
+    const totalQueries = this.QueryModel.getFilter();
+    const total = await this.QueryModel.model.countDocuments(totalQueries);
+    const page = Number(this?.query?.page) || 1;
+    const limit = Number(this?.query?.limit) || 10;
+    const totalPage = Math.ceil(total / limit);
+
+    return {
+      page,
+      limit,
+      total,
+      totalPage,
+    };
   }
 }
 

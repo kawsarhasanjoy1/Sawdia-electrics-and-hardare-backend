@@ -4,6 +4,7 @@ import { TBlog } from "./interface";
 import { BlogModel } from "./model";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.ts";
 import { Restore, softDelete } from "../../helpers/softDelete";
+import QueryBuilders from "../../builders/queryBuilders";
 
 const createBlog = async (payload: TBlog, image: any) => {
   const cloudinary: any = await sendImageToCloudinary(
@@ -15,10 +16,22 @@ const createBlog = async (payload: TBlog, image: any) => {
   return blog;
 };
 
-const getBlogs = async (query: Record<string, any>) => {
-  return await BlogModel.find({ isDeleted: false })
-    .populate("userId", "name email")
-    .sort({ createdAt: -1 });
+const getAllBlogs = async (query: Record<string, any>) => {
+  const searchableField = ["title"];
+  const blogQuery = new QueryBuilders(
+    BlogModel.find().populate("userId", "name email").sort({ createdAt: -1 }),
+    query
+  )
+    .search(searchableField)
+    .filter()
+    .sort()
+    .pagination();
+  const data = await blogQuery.QueryModel;
+  const meta = await blogQuery.countTotal();
+  return {
+    data,
+    meta,
+  };
 };
 
 const getBlogById = async (id: string) => {
@@ -63,7 +76,7 @@ const togglePublishStatus = async (id: string) => {
 
 export const blogServices = {
   createBlog,
-  getBlogs,
+  getAllBlogs,
   getBlogById,
   updateBlog,
   softDeleteBlog,

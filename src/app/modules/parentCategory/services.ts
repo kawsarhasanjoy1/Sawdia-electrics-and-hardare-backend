@@ -6,7 +6,6 @@ import { Restore, softDelete } from "../../helpers/softDelete";
 import QueryBuilders from "../../builders/queryBuilders";
 
 const createParentCategory = async (payload: TParentCategory) => {
-  console.log(payload);
   const existing = await ParentCategoryModel.findOne({ name: payload.name });
   if (existing)
     throw new AppError(StatusCodes.CONFLICT, "Parent category already exists");
@@ -19,9 +18,14 @@ const getAllParentCategories = async (query: Record<string, any>) => {
   const querySearch = new QueryBuilders(
     ParentCategoryModel.find().populate("createdBy", "name email role"),
     query
-  ).filter();
-  const result = querySearch.QueryModel;
-  return result;
+  )
+    .filter()
+    .search(["name"])
+    .sort()
+    .pagination();
+  const data = await querySearch.QueryModel;
+  const meta = await querySearch.countTotal();
+  return { data, meta };
 };
 
 const getParentCategoryById = async (id: string) => {

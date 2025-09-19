@@ -47,7 +47,7 @@ const restoreBlog = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getBlog = catchAsync(async (req: Request, res: Response) => {
+const getBlogById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await blogServices.getBlogById(id);
   sendResponse(res, {
@@ -59,7 +59,7 @@ const getBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-  const result = await blogServices.getBlogs(req.query);
+  const result = await blogServices.getAllBlogs(req.query);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -85,7 +85,7 @@ const togglePublishController = catchAsync(
 export const blogController = {
   createBlog,
   updateBlog,
-  getBlog,
+  getBlogById,
   getAllBlogs,
   softDeleteBlog,
   restoreBlog,

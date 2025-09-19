@@ -103,7 +103,6 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
 const upStatus = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.params;
   const status = req.body;
-  console.log(userId, status);
   const result = await userService.updateStatus({ id: userId, status });
   return sendResponse(res, {
     statusCode: 200,
@@ -114,7 +113,6 @@ const upStatus = catchAsync(async (req: Request, res: Response) => {
 
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log(id);
   const deleted = await userService.deleteUser(id);
 
   return sendResponse(res, {

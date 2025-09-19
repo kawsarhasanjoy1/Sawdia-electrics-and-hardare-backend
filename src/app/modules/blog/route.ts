@@ -35,6 +35,6 @@ router.patch(
   blogController.togglePublishController
 );
 router.get("/", blogController.getAllBlogs);
-router.get("/:id", blogController.getBlog);
+router.get("/:id", blogController.getBlogById);
 
 export const blogRoutes = router;

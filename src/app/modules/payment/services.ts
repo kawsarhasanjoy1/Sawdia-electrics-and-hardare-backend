@@ -87,7 +87,6 @@ const getUserPayments = async ({ id, query }: any) => {
 };
 
 const updateOrderStatus = async (status: any, transectionId: string) => {
-  console.log(status);
   const order = await OrderModel.findOne({ tran_id: transectionId });
   if (!order) throw new AppError(StatusCodes.NOT_FOUND, "Order not found");
 
