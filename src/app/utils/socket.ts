@@ -8,7 +8,7 @@ import { UserModel } from "../modules/user/model";
 export const socketUtils = (server: HTTPServer) => {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: ["https://sawdia-electronics-and-hardware.vercel.app"],   // your Next.js frontend
+      origin: ["http://localhost:3000"],   // your Next.js frontend
       credentials: true,
     },
   });
