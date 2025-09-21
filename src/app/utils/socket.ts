@@ -8,7 +8,7 @@ import { UserModel } from "../modules/user/model";
 export const socketUtils = (server: HTTPServer) => {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: ["http://localhost:3000"],   // your Next.js frontend
+      origin: ["https://sawdia-electrics-and-hardare-frontend-1.onrender.com"],   // your Next.js frontend
       credentials: true,
     },
   });
