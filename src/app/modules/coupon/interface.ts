@@ -1,6 +1,6 @@
 export interface TCoupon {
   code: string;
-  discountType: "percentage" | "fixed";
+  discountType: "percentage";
   amount: number;
   expiryDate: Date;
   minPurchase: number;

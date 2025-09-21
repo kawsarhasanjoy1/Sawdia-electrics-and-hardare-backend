@@ -5,10 +5,22 @@ import { USER_ROLE } from "../../constance/global";
 
 const router = express.Router();
 
-router.post("/create-coupon",auth(USER_ROLE.admin,USER_ROLE.superAdmin), couponController.createCoupon);
+router.post(
+  "/create-coupon",
+  auth(USER_ROLE.superAdmin),
+  couponController.createCoupon
+);
 router.get("/", couponController.getCoupons);
-router.patch("/:id",auth(USER_ROLE.admin,USER_ROLE.superAdmin), couponController.updateCoupon);
-router.delete("/:id", auth(USER_ROLE.admin,USER_ROLE.superAdmin),couponController.deleteCoupon);
+router.patch(
+  "/:id",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  couponController.updateCoupon
+);
+router.delete(
+  "/:id",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  couponController.deleteCoupon
+);
 router.post("/apply", couponController.applyCoupon);
 
 export const CouponRoutes = router;
