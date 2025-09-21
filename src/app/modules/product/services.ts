@@ -107,30 +107,37 @@ const getProductById = async (id: string) => {
 };
 
 const updateProduct = async (
-  id: string,
-  payload: Partial<TProduct> & {
-    imageUpdates?: { index: number; newImage: string }[];
-  }
+  productId: string,
+  userId: string,
+  files: Express.Multer.File[],
+  payload: any,
+  index: string[],
 ) => {
-  const product = await ProductModel.findById(id);
-  if (!product) throw new AppError(StatusCodes.NOT_FOUND, "Product not found");
+  const product: any = await ProductModel.findById(productId);
+  if (!product) {
+    throw new AppError(StatusCodes.NOT_FOUND, "Product not found");
+  }
 
-  if (payload.imageUpdates && Array.isArray(payload.imageUpdates)) {
-    for (const { index, newImage } of payload.imageUpdates) {
-      if (product?.images?.[index]) {
-        product.images[index] = newImage;
-      }
+  const images = [...product?.images];
+
+  for (let i = 0; i < files.length; i++) {
+    const idx = parseInt(index[i], 5);
+    if (!Number.isNaN(idx) && images[idx] !== undefined) {
+      const uploaded: any = await sendImageToCloudinary(
+        files[i].path,
+        files[i].filename
+      );
+      images[idx] = uploaded.secure_url;
     }
   }
 
-  const { imageUpdates, ...restPayload } = payload;
-  const update = await ProductModel.findByIdAndUpdate(
-    { _id: id },
-    { ...restPayload, images: product.images },
+  const updated = await ProductModel.findByIdAndUpdate(
+    productId,
+    { ...payload, images },
     { new: true }
   );
 
-  return update;
+  return updated;
 };
 
 const updateProductSave = async (userId: string, productId: string) => {

@@ -52,9 +52,17 @@ const getProductByIdController = catchAsync(
 // Update Product
 const updateProductController = catchAsync(
   async (req: Request, res: Response) => {
+    const files = req.files as Express.Multer.File[];
+    const id = req.params.id;
+    const userId = req.user?.userId;
+    const data = JSON.parse(req?.body?.data);
+    const index = req?.body?.index as string[];
     const product = await ProductServices.updateProduct(
-      req.params.id,
-      req.body
+      id,
+      userId,
+      files,
+      data,
+      index
     );
     sendResponse(res, {
       statusCode: 200,

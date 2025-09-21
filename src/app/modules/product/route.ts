@@ -18,6 +18,8 @@ router.post(
 router.put(
   "/:id",
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  upload.array("files", 5),
+  // parseData,
   productController.updateProductController
 );
 router.patch(
