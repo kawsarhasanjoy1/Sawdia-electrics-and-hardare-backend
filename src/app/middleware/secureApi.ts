@@ -1,22 +1,19 @@
-import { NextFunction, Request, Response } from "express";
+import type { RequestHandler } from "express";
 
-export const secureApi = (req: Request, res: Response, next: NextFunction) => {
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
+export const secureApi: RequestHandler = (req, res, next) => {
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
-    // Prevent MIME sniffing
-    res.setHeader("X-Content-Type-Options", "nosniff");
+  const csp = [
+    "default-src 'self'",
+    "img-src 'self' data:",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "connect-src 'self' http://localhost:3000 http://localhost:3000 ws: wss:",
+  ].join("; ");
+  res.setHeader("Content-Security-Policy", csp);
 
-    // Referrer Policy
-    res.setHeader("Referrer-Policy", "no-referrer");
-
-    // Permissions Policy (formerly Feature Policy)
-    res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-
-    // Content Security Policy (CSP)
-    res.setHeader(
-        "Content-Security-Policy",
-        "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline';"
-    );
-
-    next();
-}
+  next();
+};

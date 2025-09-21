@@ -5,29 +5,28 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { secureApi } from "./app/middleware/secureApi";
 export const app = express();
 
+app.set("trust proxy", 1);
 app.use(cookieParser());
+
 app.use(
   cors({
-    origin: [
-      "https://sawdia-electrics-and-hardare-frontend-1.onrender.com",
-      "http://localhost:3000",
-    ],
+    origin: ["http://localhost:3000"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(helmet());
 
 app.disable("x-powered-by");
-app.use(secureApi);
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
 
+app.get("/", (req, res) => res.send("Hello World!"));
 app.use("/api/v1", router);
-app.use(globalErrorHandler);
+
+// 404 then error
 app.use(notFound);
+app.use(globalErrorHandler);

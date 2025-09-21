@@ -2,18 +2,20 @@ import { StatusCodes } from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
 import { AuthServices } from "./services";
 import sendResponse from "../../utils/sendResponse";
+import config from "../../config/config";
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
   const { refreshToken, accessToken } = result;
+ const isProd = config.node_env === "production"
+ res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  secure: isProd,          
+  sameSite: isProd ? "none" : "lax", 
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+  path: "/api/v1/auth/refresh-token",          
+});
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    path: "/",
-  });
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
