@@ -10,7 +10,7 @@ async function main() {
     console.log("✅ MongoDB connected");
     const httpServer = createServer(app);
     socketUtils(httpServer);
-    httpServer.listen(config.port, () => {
+    httpServer.listen(config.port || 5000 , '0.0.0.0', () => {
       console.log(`🚀 Server running on http://localhost:${config.port}`);
     });
   } catch (err) {
