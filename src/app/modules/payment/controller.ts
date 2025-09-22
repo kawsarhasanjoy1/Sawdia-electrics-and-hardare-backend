@@ -40,15 +40,13 @@ const createPaymenController = catchAsync(
           StatusCodes.BAD_REQUEST,
           `${product.name} has only ${product.stock} items left`
         );
-
-      totalAmount += (product.discountPrice || product.price) * item.quantity;
+      totalAmount = item?.price;
     }
 
     const tran_id = new ObjectId().toString();
-
-    if (req.body.couponCode) {
+    if (req?.body?.couponCode) {
       const couponResult = await couponServices.applyCoupon(
-        req.body.couponCode,
+        req?.body?.couponCode,
         totalAmount
       );
       discount = couponResult.discount;

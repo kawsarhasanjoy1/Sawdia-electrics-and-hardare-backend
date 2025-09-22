@@ -4,7 +4,11 @@ import { catchAsync } from "../../utils/catchAsync";
 import { couponServices } from "./services";
 
 const createCoupon = catchAsync(async (req: Request, res: Response) => {
-  const result = await couponServices.createCoupon(req.body);
+  const userId = req.user?.userId;
+  const result = await couponServices.createCoupon({
+    userId: userId,
+    ...req.body,
+  });
 
   sendResponse(res, {
     statusCode: 201,
@@ -14,8 +18,8 @@ const createCoupon = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getCoupons = catchAsync(async (_req: Request, res: Response) => {
-  const result = await couponServices.getCoupons();
+const getCoupons = catchAsync(async (req: Request, res: Response) => {
+  const result = await couponServices.getCoupons(req.query);
 
   sendResponse(res, {
     statusCode: 200,
