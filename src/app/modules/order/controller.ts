@@ -1,80 +1,96 @@
-// import { Request, Response } from "express";
-// import { catchAsync } from "../../utils/catchAsync";
-// import { OrderService } from "./services";
-// import sendResponse from "../../utils/sendResponse";
-// import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
+import { catchAsync } from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
+import { orderServices } from "./services";
+import { Request, Response } from "express";
 
+const getOrder = catchAsync(async (req, res) => {
+  const query = req.query;
+  const result = await orderServices.getOrder(query);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "order fetched successful",
+    data: result,
+  });
+});
 
-// // // Create Order
-// // const createOrderController = catchAsync(async (req: Request, res: Response) => {
-// //   const order = await OrderService.createOrder(req.body);
-// //   sendResponse(res, {
-// //     statusCode: StatusCodes.CREATED,
-// //     success: true,
-// //     message: "Order created successfully",
-// //     data: order,
-// //   });
-// // });
+const getUserOrder = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user;
+  const query = req.query;
+  const result = await orderServices.getUserOrder({ id: userId, query });
 
-// // Get All Orders
-// const getAllOrdersController = catchAsync(async (req: Request, res: Response) => {
-//   const orders = await OrderService.getAllOrders();
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Orders retrieved successfully",
-//     data: orders,
-//   });
-// });
+  sendResponse(res, {
+    statusCode: 200,
+    message: "User order fetched successfully",
+    data: result,
+    success: true,
+  });
+});
 
-// // Get Single Order
-// const getOrderByIdController = catchAsync(async (req: Request, res: Response) => {
-//   const order = await OrderService.getOrderById(req.params.id);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Order retrieved successfully",
-//     data: order,
-//   });
-// });
-// const getOrderByUserIdController = catchAsync(async (req: Request, res: Response) => {
-//     console.log(req.params.userId)
-//   const order = await OrderService.getOrderByUser(req.params.userId);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Order retrieved successfully",
-//     data: order,
-//   });
-// });
+const getStats = catchAsync(async (req, res) => {
+  const result = await orderServices.getStats();
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Overall stats fetched successfully",
+    data: result,
+  });
+});
 
-// // Update Order Status
-// const updateOrderStatusController = catchAsync(async (req: Request, res: Response) => {
-//   const order = await OrderService.updateOrderStatus(req.params.id, req.body.status);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Order status updated successfully",
-//     data: order,
-//   });
-// });
+const getMonthlySale = catchAsync(async (req, res) => {
+  const result = await orderServices.monthlySale();
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Monthly sales for last 12 months fetched successfully",
+    data: result,
+  });
+});
 
-// // Delete Order
-// const deleteOrderController = catchAsync(async (req: Request, res: Response) => {
-//   const result = await OrderService.deleteOrder(req.params.id);
-//   sendResponse(res, {
-//     statusCode: StatusCodes.OK,
-//     success: true,
-//     message: "Order deleted successfully",
-//     data: result,
-//   });
-// });
+const getUserStats = catchAsync(async (req, res) => {
+  const { userId } = req.user;
+  console.log(userId);
+  const result = await orderServices.getUserStats(userId);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "User stats fetched successfully",
+    data: result,
+  });
+});
 
-// export const orderController = {
-// //   createOrderController,
-//   getAllOrdersController,
-//   getOrderByIdController,
-//   updateOrderStatusController,
-//   deleteOrderController,
-//   getOrderByUserIdController
-// };
+const getUserYearlyBuy = catchAsync(async (req, res) => {
+  const { userId } = req.user;
+  const result = await orderServices.getUserYearlyBuy(userId);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "User yearly purchase (last 12 months) fetched successfully",
+    data: result,
+  });
+});
+
+const updateOrderStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const result = await orderServices.updateOrderStatus(status, id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    message: "order status updated successfully",
+    data: result,
+    success: true,
+  });
+});
+
+export const OrderController = {
+  getOrder,
+  getUserOrder,
+  getStats,
+  getMonthlySale,
+  getUserStats,
+  getUserYearlyBuy,
+  updateOrderStatus,
+};

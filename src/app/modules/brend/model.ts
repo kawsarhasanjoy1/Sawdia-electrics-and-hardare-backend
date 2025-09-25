@@ -3,7 +3,7 @@ import { TBrand } from "./interface";
 
 const BrandSchema = new Schema<TBrand>(
   {
-    name: { type: String, required: true, trim: true, unique: true },
+    name: { type: String, required: true, trim: true },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
@@ -14,5 +14,7 @@ const BrandSchema = new Schema<TBrand>(
   },
   { timestamps: true }
 );
+
+BrandSchema.index({ name: 1, categoryId: 1 }, { unique: true });
 
 export const BrandModel = model<TBrand>("Brand", BrandSchema);

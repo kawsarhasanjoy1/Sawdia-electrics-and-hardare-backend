@@ -2,8 +2,6 @@ import AppError from "../../error/handleAppError";
 import { StatusCodes } from "http-status-codes";
 import { Types } from "mongoose";
 import { ReviewModel } from "./model";
-import { OrderModel } from "../payment/model";
-import { Restore, softDelete } from "../../helpers/softDelete";
 
 const createReview = async (payload: {
   userId: Types.ObjectId;

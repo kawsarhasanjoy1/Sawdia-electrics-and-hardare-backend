@@ -1,38 +1,46 @@
-// import { Schema, model } from "mongoose";
-// import { TOrder } from "./interface";
+// order.model.ts
+import mongoose, { Schema, Document } from "mongoose";
+import { TOrder } from "./interface";
 
-// const OrderSchema = new Schema<TOrder>(
-//     {
-//         userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-//         products: [
-//             {
-//                 productId: {
-//                     type: Schema.Types.ObjectId,
-//                     ref: "Product",
-//                     required: true,
-//                 },
-//                 quantity: { type: Number, required: true, min: 1 },
-//             },
-//         ],
-//         totalPrice: { type: Number, required: true },
-//         status: {
-//             type: String,
-//             enum: ["pending", "paid", "shipped", "delivered", "cancelled"],
-//             default: "pending",
-//         },
-//         paymentMethod: {
-//             type: String,
-//             enum: ["cod", "sslcommerz", "stripe"],
-//             default: "cod",
-//         },
-//         paymentStatus: {
-//             type: String,
-//             enum: ["pending", "success", "failed"],
-//             default: "pending",
-//         },
-//         shippingAddress: { type: String, required: true },
-//     // },
-//     { timestamps: true }
-// );
+const orderSchema = new Schema<TOrder>(
+  {
+    userId: { type: String, required: true, ref: "User" },
+    products: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: { type: Number, required: true },
+        price: { type: Number, required: true },
+        name: { type: String, required: true },
+      },
+    ],
+    shippingAddress: {
+      line1: { type: String, required: true },
+      city: { type: String, required: true },
+      postcode: { type: String, required: true },
+      phone: { type: String, required: true },
+    },
+    notes: { type: String },
+    subtotal: { type: Number, required: true },
+    shippingFee: { type: Number, required: true },
+    discount: { type: Number, required: true },
+    totalPayable: { type: Number, required: true },
+    currency: { type: String, required: true },
+    couponCode: { type: String },
+    transactionId: { type: String, required: true, unique: true },
+    gateway: { type: String, default: "SSLCommerz" },
+    status: {
+      type: String,
+      enum: ["PENDING", "PAID", "FAILED", "CANCELLED", "REFUNDED"],
+      default: "PENDING",
+    },
+    gatewayPayload: { type: Schema.Types.Mixed },
+    redirectUrl: { type: String },
+  },
+  { timestamps: true }
+);
 
-// export const OrderModel = model<TOrder>("Order", OrderSchema);
+export const OrderModel = mongoose.model<TOrder>("Order", orderSchema);
