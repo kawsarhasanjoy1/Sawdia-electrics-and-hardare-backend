@@ -117,7 +117,9 @@ const updateProduct = async (
   if (!product) {
     throw new AppError(StatusCodes.NOT_FOUND, "Product not found");
   }
-
+  if (product?.isDeleted) {
+    throw new AppError(StatusCodes.CONFLICT, 'Product is deleted')
+  }
   const images = [...product?.images];
 
   for (let i = 0; i < files.length; i++) {
