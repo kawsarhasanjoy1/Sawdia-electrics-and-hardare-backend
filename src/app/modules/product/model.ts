@@ -23,6 +23,7 @@ const ProductSchema = new Schema<TProduct>(
     rating: { type: Number, default: 0 },
     ratingAverage: { type: Number, default: 0 },
     ratingQuantity: { type: Number, default: 0 },
+    variants: { type: Schema.Types.Mixed, default: {} },
     isDeleted: { type: Boolean, default: false },
     favouriteCount: { type: Number, default: 0 },
     favourite: { type: FavouriteSchema },

@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import slugify from "slugify";
 import { TParentCategory } from "./interface";
 import { parentCategoryNames } from "./constance";
 

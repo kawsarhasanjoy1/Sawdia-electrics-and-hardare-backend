@@ -14,6 +14,7 @@ export interface TProduct {
   price: number;
   discountPrice?: number;
   stock: number;
+  variants: any;
   images?: string[];
   sku?: string;
   warranty?: string;
