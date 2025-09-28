@@ -69,7 +69,7 @@ const resetPassword = catchAsync(async (req, res) => {
 
 
 const logout = catchAsync(async (req, res) => {
- res.cookie('refreshToken', {
+ res.clearCookie('refreshToken', {
     secure: config.node_env === 'production',
     httpOnly: true,
     sameSite: 'none',
