@@ -5,19 +5,16 @@ import { AuthServices } from "./services";
 import sendResponse from "../../utils/sendResponse";
 import config from "../../config/config";
 
-// Cookie flags:
-// - If frontend is on a different origin and you're on HTTPS, use sameSite:"none", secure:true.
-// - For localhost/dev over HTTP, use sameSite:"lax", secure:false.
-
-const isProd = config.node_env === "production";
-
-const cookieOpts = isProd
-  ? { httpOnly: true, secure: true, sameSite: "none" as const, path: "/", maxAge: 1000 * 60 * 60 * 24 * 365 }
-  : { httpOnly: true, secure: false, sameSite: "lax" as const, path: "/", maxAge: 1000 * 60 * 60 * 24 * 365 };
 
 const loginUser = catchAsync(async (req, res) => {
   const { refreshToken, accessToken } = await AuthServices.loginUser(req.body);
-  res.cookie("refreshToken", refreshToken, cookieOpts);
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.node_env === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -72,12 +69,13 @@ const resetPassword = catchAsync(async (req, res) => {
 
 
 const logout = catchAsync(async (req, res) => {
-  res.clearCookie("refreshToken", {
-    path: "/",
+ res.cookie('refreshToken', {
+    secure: config.node_env === 'production',
     httpOnly: true,
-    sameSite: isProd ? "none" : "lax",
-    secure: isProd,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
   });
+;
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
