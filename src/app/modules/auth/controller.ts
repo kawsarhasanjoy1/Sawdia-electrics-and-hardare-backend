@@ -17,8 +17,6 @@ const cookieOpts = isProd
 
 const loginUser = catchAsync(async (req, res) => {
   const { refreshToken, accessToken } = await AuthServices.loginUser(req.body);
-
-  // Set HttpOnly refresh cookie
   res.cookie("refreshToken", refreshToken, cookieOpts);
 
   sendResponse(res, {
@@ -29,8 +27,8 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+
 const createAccessToken = catchAsync(async (req, res) => {
-  // Read refresh token from cookie
   const { accessToken } = await AuthServices.createAccessToken(req.cookies.refreshToken);
 
   sendResponse(res, {
@@ -62,7 +60,7 @@ const forgetPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const token = req.headers.authorization as string; // accepts Bearer or raw
+  const token = req.headers.authorization as string; 
   const result = await AuthServices.resetPassword(req.body, token);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -72,7 +70,7 @@ const resetPassword = catchAsync(async (req, res) => {
   });
 });
 
-// Optional: logout to clear HttpOnly refresh cookie
+
 const logout = catchAsync(async (req, res) => {
   res.clearCookie("refreshToken", {
     path: "/",

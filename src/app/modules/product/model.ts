@@ -1,15 +1,6 @@
 import { Schema, model } from "mongoose";
 import { TProduct } from "./interface";
 
-// const ReviewSchema = new Schema(
-//   {
-//     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-//     name: { type: String, required: true },
-//     rating: { type: Number, required: true, min: 1, max: 5 },
-//     comment: { type: String },
-//   },
-//   { timestamps: { createdAt: true, updatedAt: false } }
-// );
 const FavouriteSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
@@ -20,6 +11,7 @@ const ProductSchema = new Schema<TProduct>(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true },
+    parentCategory: { type: Schema.Types.ObjectId, ref: "parentCategory", required: true },
     categoryId: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     brandId: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
     price: { type: Number, required: true },

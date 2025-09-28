@@ -8,6 +8,7 @@ export interface TProduct {
   userId: Types.ObjectId;
   name: string;
   description: string;
+  parentCategory: Types.ObjectId;
   categoryId: Types.ObjectId;
   brandId: Types.ObjectId;
   price: number;

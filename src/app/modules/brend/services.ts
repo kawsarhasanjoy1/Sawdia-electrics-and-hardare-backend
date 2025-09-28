@@ -18,6 +18,16 @@ const createBrand = async (payload: TBrand) => {
       `${payload.name} is not a valid brand for this category ${category.name}`
     );
   }
+
+  const brands = await BrandModel.findOne({
+    parentCategory: payload?.parentCategory,
+    categoryId: payload?.categoryId,
+    name: payload?.name,
+  });
+  if (brands) {
+    throw new AppError(StatusCodes.CONFLICT, "Brand already exist");
+  }
+
   const brand = new BrandModel(payload);
   return await brand.save();
 };

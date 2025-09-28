@@ -7,6 +7,7 @@ import { Restore, softDelete } from "../../helpers/softDelete";
 import AppError from "../../error/handleAppError";
 import QueryBuilders from "../../builders/queryBuilders";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary.ts";
+import { ParentCategoryModel } from "../parentCategory/model";
 
 const createProduct = async (payload: TProduct, users: any, images: any[]) => {
   payload.images = [];
@@ -20,6 +21,11 @@ const createProduct = async (payload: TProduct, users: any, images: any[]) => {
   const user = await UserModel.findOne({ _id: users?.userId });
   if (!user) throw new AppError(StatusCodes.NOT_FOUND, "not found");
   payload.userId = user?._id;
+  const isExistParentCategory = await ParentCategoryModel.findOne({
+    _id: payload?.parentCategory,
+  });
+  if (!isExistParentCategory)
+    throw new AppError(StatusCodes.NOT_FOUND, "parent category not found");
   const isExistCategory = await CategoryModel.findOne({
     _id: payload.categoryId,
     isDeleted: false,
@@ -46,18 +52,30 @@ const getAllProducts = async (query: Record<string, any>) => {
     limit,
     ...rest
   } = query;
-
   const searchAbleFields = ["name", "sku"];
   const queryObj: Record<string, any> = { ...rest };
 
   if (category) {
     queryObj.categoryId = category;
   } else if (parentCategory) {
-    const subCategories = await CategoryModel.find({ parentCategory }).select(
-      "_id"
-    );
-    const subIds = subCategories.map((c) => c._id);
-    queryObj.categoryId = { $in: subIds };
+    const parentCategories = await ParentCategoryModel.find({
+      name: parentCategory,
+    });
+    if (parentCategories.length > 0) {
+      let objId: Record<string, any> = {};
+      parentCategories?.map((id) => (objId.parentCategory = id?._id));
+      const subCategories = await CategoryModel.find({
+        parentCategory: objId?.parentCategory,
+      }).select("_id");
+      const subId = subCategories?.map((category) => category?._id);
+      queryObj.categoryId = { $in: subId };
+    } else {
+      const subCategories = await CategoryModel.find({
+        parentCategory: parentCategory,
+      }).select("_id");
+      const subIds = subCategories.map((c) => c._id);
+      queryObj.categoryId = { $in: subIds };
+    }
   }
 
   if (brand) {
@@ -76,7 +94,6 @@ const getAllProducts = async (query: Record<string, any>) => {
   if (rating) {
     queryObj.ratingAverage = { $gte: rating };
   }
-
   const productQuery = new QueryBuilders(
     ProductModel.find()
       .populate("categoryId")
@@ -111,14 +128,14 @@ const updateProduct = async (
   userId: string,
   files: Express.Multer.File[],
   payload: any,
-  index: string[],
+  index: string[]
 ) => {
   const product: any = await ProductModel.findById(productId);
   if (!product) {
     throw new AppError(StatusCodes.NOT_FOUND, "Product not found");
   }
   if (product?.isDeleted) {
-    throw new AppError(StatusCodes.CONFLICT, 'Product is deleted')
+    throw new AppError(StatusCodes.CONFLICT, "Product is deleted");
   }
   const images = [...product?.images];
 

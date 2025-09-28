@@ -33,7 +33,6 @@ const createAdmin = async (
   }
   if (!isExistSuperAdmin)
     throw new AppError(StatusCodes.UNAUTHORIZED, "You are not authorized");
-  payload.userId = userId;
   const result = await UserModel.create(payload);
 };
 

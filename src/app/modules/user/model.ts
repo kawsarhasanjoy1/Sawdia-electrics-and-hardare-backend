@@ -7,7 +7,6 @@ import AppError from "../../error/handleAppError";
 
 const UserSchema = new Schema<TUser, TUserModel>(
   {
-    userId: { type: Schema.Types.ObjectId, default: "" },
     name: { type: String, required: true, trim: true },
     email: {
       type: String,
