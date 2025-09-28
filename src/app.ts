@@ -12,8 +12,13 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://sawdia-electrics-and-hardare-frontend-1.onrender.com", "http://localhost:3000"],
+    origin: [
+      "https://sawdia-electrics-and-hardare-frontend-1.onrender.com",
+      "http://localhost:3000",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
