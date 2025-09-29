@@ -15,6 +15,7 @@ const orderSchema = new Schema<TOrder>(
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
         name: { type: String, required: true },
+        variants: { type: Schema.Types.Mixed, default: {} },
       },
     ],
     shippingAddress: {

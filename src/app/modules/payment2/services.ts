@@ -13,6 +13,7 @@ import QueryBuilders from "../../builders/queryBuilders";
 
 const trimSlash = (s?: string) => (s ? s.replace(/\/$/, "") : "");
 const createPayment = async (payload: any) => {
+  console.log(payload)
   const { userId } = payload;
   const transactionId = `txn_${Date.now()}_${Math.random()
     .toString(36)
@@ -56,6 +57,7 @@ const createPayment = async (payload: any) => {
       name: item?.name,
       price: item?.price,
       quantity: item.quantity,
+      variants: item?.variants
     });
   }
 

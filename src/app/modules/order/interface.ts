@@ -5,6 +5,7 @@ export interface TOrderProduct {
   quantity: number;
   price: number;
   name: string;
+  variants: {}
 }
 
 export type OrderStatus =
