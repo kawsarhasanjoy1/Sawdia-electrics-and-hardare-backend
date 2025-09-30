@@ -7,6 +7,7 @@ const transporter = nodmailer.createTransport({
   secure: true,
   tls: {
     ciphers: "SSLv3",
+    rejectUnauthorized: false 
   },
   auth: {
     user: config.app_email,
