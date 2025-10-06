@@ -66,7 +66,6 @@ UserSchema.statics.isUserExistsByEmail = async function (email: string) {
   }
   return user;
 };
-
 UserSchema.statics.isPasswordMatched = async function (
   password: string,
   hashedPassword: string

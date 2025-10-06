@@ -9,7 +9,6 @@ import config from "../../config/config";
 export const isProd = process.env.NODE_ENV === 'production'
 export const isCrossSite = true;
 const loginUser = catchAsync(async (req, res) => {
-  console.log(isCrossSite ? true : isProd)
   const { refreshToken, accessToken } = await AuthServices.loginUser(req.body);
   res.cookie('refreshToken', refreshToken, {
   httpOnly: true,
