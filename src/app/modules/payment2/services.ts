@@ -91,7 +91,7 @@ const createPayment = async (payload: any) => {
           discount,
           totalPayable,
           currency: "BDT",
-          couponCode: payload.couponCode,
+          couponCode: payload?.couponCode,
           transactionId,
           gateway: "SSLCommerz",
           status: "PENDING",

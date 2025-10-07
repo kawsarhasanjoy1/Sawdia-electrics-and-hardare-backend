@@ -10,8 +10,8 @@ type TAcceptNodeMailer = {
 
 const transporter = nodemailer.createTransport({
   host: config.host_email,
-  port: Number(config.app_port),
-  secure: Number(config.app_port) === 465,
+  port: 587,
+  secure: false,
   auth: {
     user: config.app_email,
     pass: config.app_pass,
