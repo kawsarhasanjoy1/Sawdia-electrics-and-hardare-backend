@@ -10,6 +10,7 @@ import { TUser } from "../user/interface";
 import AppError from "../../error/handleAppError";
 import { sendEmail } from "../../utils/sendEmail";
 
+
 const loginUser = async (payload: TLoginUser) => {
   const user = (await UserModel.isUserExistsByEmail(payload?.email)) as any;
   if (!user) throw new AppError(StatusCodes.NOT_FOUND, "User not found");

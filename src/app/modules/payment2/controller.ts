@@ -26,19 +26,14 @@ const paymentSuccess = async (req: Request, res: Response) => {
   const redirectBase = config.frontend_url || "";
   const val_id = String(form.val_id || "");
   const tran_id = String(form.tran_id || "");
-
-  if (!val_id || !tran_id) {
-    return res.redirect(`${redirectBase}/fail?missing=1`);
-  }
   try {
     const result = await paymentServices2.handleSuccess({ val_id, tran_id });
-
+    
     if (result.status === "PAID") {
       return res.redirect(`${redirectBase}/success/${result.transactionId}`);
     }
     return res.redirect(`${redirectBase}/fail/${result.transactionId}`);
   } catch (e: any) {
-    console.log(e);
     const redirectBase = config.frontend_url || "";
     return res.redirect(`${redirectBase}/fail`);
   }

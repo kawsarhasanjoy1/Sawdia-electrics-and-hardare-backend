@@ -11,7 +11,7 @@ export const secureApi: RequestHandler = (req, res, next) => {
     "img-src 'self' data:",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
-    "connect-src 'self' https://sawdia-electrics-and-hardare-frontend-1.onrender.com https://sawdia-electrics-and-hardare-frontend-1.onrender.com ws: wss:",
+    "connect-src 'self' http://localhost:3000 http://localhost:3000 ws: wss:",
   ].join("; ");
   res.setHeader("Content-Security-Policy", csp);
 
