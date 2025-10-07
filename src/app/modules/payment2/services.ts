@@ -13,7 +13,6 @@ import QueryBuilders from "../../builders/queryBuilders";
 
 const trimSlash = (s?: string) => (s ? s.replace(/\/$/, "") : "");
 const createPayment = async (payload: any) => {
-  console.log(payload)
   const { userId } = payload;
   const transactionId = `txn_${Date.now()}_${Math.random()
     .toString(36)
@@ -134,10 +133,10 @@ const createPayment = async (payload: any) => {
   }
 
   const base = trimSlash(config.base_url)!;
-  const success_url = `${base}/api/v1/Payment/success`;
-  const fail_url = `${base}/api/v1/Payment/fail`;
+  const success_url = `${base}/api/v1/payment/success`;
+  const fail_url = `${base}/api/v1/payment/fail`;
   const cancel_url = `${base}/api/v1/Payment/cancel`;
-  const ipn_url = `${base}/api/v1/Payment/ipn`;
+  const ipn_url = `${base}/api/v1/payment/ipn`;
 
   const cus_phone =
     (payload.shippingAddress?.phone || "").replace(/\D/g, "").slice(-15) ||
