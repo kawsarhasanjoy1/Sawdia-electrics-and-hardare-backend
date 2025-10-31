@@ -13,7 +13,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "https://sawdia-electrics-and-hardare-frontend-1.onrender.com",
+      "https://sawdia-electrics-and-hardare-frontend-dhy71kjjr.vercel.app",
       "http://localhost:3000"
     ],
     credentials: true,
