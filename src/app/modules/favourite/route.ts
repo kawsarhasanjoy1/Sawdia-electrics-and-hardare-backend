@@ -6,10 +6,10 @@ import { USER_ROLE } from "../../constance/global";
 
 const router = Router();
 
-router.post("/", auth(USER_ROLE.user), FavouriteController.toggleFavourite);
+router.post("/", auth(USER_ROLE.user, USER_ROLE.admin, USER_ROLE.superAdmin), FavouriteController.toggleFavourite);
 router.get(
   "/",
-  auth(USER_ROLE.user),
+  auth(USER_ROLE.user, USER_ROLE.admin, USER_ROLE.superAdmin),
   FavouriteController.getFavourites
 );
 

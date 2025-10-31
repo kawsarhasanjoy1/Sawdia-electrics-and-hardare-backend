@@ -2,17 +2,24 @@ import AppError from "../../error/handleAppError";
 import { StatusCodes } from "http-status-codes";
 import { TCategory } from "./interface";
 import { CategoryModel } from "./model";
-import slugify from "slugify";
 import { ParentCategoryModel } from "../parentCategory/model";
 import { Restore, softDelete } from "../../helpers/softDelete";
 import QueryBuilders from "../../builders/queryBuilders";
+import {parentToSubCategories, SubCategoryName } from "../../constance/global";
 
 const createCategory = async (payload: TCategory) => {
   const parentCategory = await ParentCategoryModel.findById({
     _id: payload.parentCategory,
   });
+  if (!parentToSubCategories[parentCategory?.name as SubCategoryName].includes(payload.name)) {
+    throw new AppError(StatusCodes.NOT_FOUND, `${payload.name} not found under ${parentCategory?.name}`);
+  }
   if (!parentCategory)
     throw new AppError(StatusCodes.NOT_FOUND, "Parent category not found");
+  const isExistCategory = await CategoryModel.findOne({ parentCategory: payload?.parentCategory, name: payload?.name })
+  if (isExistCategory) {
+    throw new AppError(StatusCodes.CONFLICT, `already exist ${isExistCategory?.name} under ${isExistCategory?.parentCategory}`)
+  }
   const category = await CategoryModel.create(payload);
   return category;
 };

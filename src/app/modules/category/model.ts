@@ -20,6 +20,8 @@ const CategorySchema = new Schema<TCategory>(
   { timestamps: true }
 );
 
+CategorySchema.index({ name: 1, parentCategory: 1 }, { unique: true })
+
 CategorySchema.pre("save", async function (next) {
   const doc = this as TCategory & { parentCategoryName?: ParentCategoryName };
   if (!doc.parentCategoryName) return next();

@@ -11,12 +11,12 @@ export const isCrossSite = true;
 const loginUser = catchAsync(async (req, res) => {
   const { refreshToken, accessToken } = await AuthServices.loginUser(req.body);
   res.cookie('refreshToken', refreshToken, {
-  httpOnly: true,
-  path: '/',
-  maxAge: 1000 * 60 * 60 * 24 * 365, 
-  sameSite: isCrossSite ? 'none' as const : ('lax' as const),
-  secure: isCrossSite ? true : isProd
-});
+    httpOnly: true,
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+    sameSite: isCrossSite ? 'none' as const : ('lax' as const),
+    secure: isCrossSite ? true : isProd
+  });
 
 
   sendResponse(res, {
@@ -71,13 +71,13 @@ const resetPassword = catchAsync(async (req, res) => {
 
 
 const logout = catchAsync(async (req, res) => {
- res.clearCookie('refreshToken', {
-    secure: config.node_env === 'production',
+  res.clearCookie('refreshToken', {
+    secure: true,
     httpOnly: true,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
-;
+  ;
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,

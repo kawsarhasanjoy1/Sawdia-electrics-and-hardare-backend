@@ -1,17 +1,16 @@
 import { Types } from "mongoose";
 
 export type TParentCategoryName =
-  | "Electronics"
-  | "Mobile Accessories"
-  | "Computers & Laptops"
-  | "Televisions & Home Entertainment"
-  | "Kitchen Appliances"
-  | "Power Tools"
-  | "Hardware & Construction"
-  | "Lighting & Electrical"
-  | "Cables & Wires"
-  | "Gaming & Consoles";
-
+  'Desktop' |
+  'Laptot' |
+  'Monitor' |
+  'Phone' |
+  'Power' |
+  'Tablet' |
+  'Camera' |
+  'Gaming' |
+  'Accessories' |
+  'Tv';
 export interface TParentCategory {
   name: TParentCategoryName;
   description?: string;

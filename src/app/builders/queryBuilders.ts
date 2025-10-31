@@ -22,14 +22,42 @@ class QueryBuilders<T> {
 
   filter() {
     const queryObj = { ...this.query };
-    if (queryObj?.isOnline) {
-      queryObj.isOnline = Boolean(queryObj?.isOnline);
+
+    let variants: Record<string, any> = {};
+    if (queryObj?.variants) {
+      try {
+        variants = typeof queryObj.variants === "string"
+          ? JSON.parse(queryObj.variants)
+          : queryObj.variants;
+      } catch {
+        variants = {};
+      }
+      delete queryObj.variants;
     }
+
+
     const excludedFields = ["searchTerm", "page", "sort", "limit"];
     excludedFields.forEach((field) => delete queryObj[field]);
-    this.QueryModel = this.QueryModel.find(queryObj);
+
+    const finalFilter: Record<string, any> = { ...queryObj };
+
+    Object.entries(variants).forEach(([key, value]) => {
+      const path = `variants.${key}`;
+      if (Array.isArray(value)) {
+        finalFilter[path] = {
+          $in: value.map((v) =>
+            (String(v)))
+        };
+      } else {
+        finalFilter[path] = { $regex: value };
+      }
+    });
+
+
+    this.QueryModel = this.QueryModel.find(finalFilter);
     return this;
   }
+
 
   sort() {
     const sort = this.query.sort ? this.query.sort : "-createdAt";
